@@ -12,7 +12,10 @@ client.on('message', message => {
     message.member.voiceChannel
       .join()
       .then(connection => {
-        setTimeout(() => message.member.voiceChannel.leave(), 5000);
+        const dispatcher = connection.playFile('./audio/song.mp3');
+        dispatcher.on('end', ()=> {
+          message.member.voiceChannel.leave()
+        })
       })
       .catch(console.log);
   } else {
