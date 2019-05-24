@@ -13,7 +13,7 @@ client.on('message', message => {
     message.member.voiceChannel
       .join()
       .then(connection => {
-        const dispatcher = connection.playFile(path.join(__dirname, 'audio', 'song.mp3'));
+        const dispatcher = connection.playFile('song.mp3');
         dispatcher.on('end', ()=> {
           message.member.voiceChannel.leave()
         })
