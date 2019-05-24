@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+var path = require('path');
 
 const TOKEN = 'NTgxMTgyOTYzNDU1MzYxMDQ1.XOeLuQ.o_jy4GGxO5NB1DOFZoKIAUhAQlg';
 client.login(TOKEN);
@@ -12,7 +13,7 @@ client.on('message', message => {
     message.member.voiceChannel
       .join()
       .then(connection => {
-        const dispatcher = connection.playFile('./audio/song.mp3');
+        const dispatcher = connection.playFile(path.join(__dirname, 'audio', 'song.mp3'));
         dispatcher.on('end', ()=> {
           message.member.voiceChannel.leave()
         })
