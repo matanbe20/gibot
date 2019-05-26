@@ -5,6 +5,11 @@ var path = require('path');
 const TOKEN = 'NTgxMTgyOTYzNDU1MzYxMDQ1.XOeLuQ.o_jy4GGxO5NB1DOFZoKIAUhAQlg';
 client.login(TOKEN);
 
+client.on('ready', ()=> {
+  console.log('Bot is up and running ... yay');
+  
+})
+
 client.on('message', message => {
   // Voice only works in guilds, if the message does not come from a guild,
 
@@ -13,10 +18,14 @@ client.on('message', message => {
     message.member.voiceChannel
       .join()
       .then(connection => {
-        const dispatcher = connection.playFile('song.mp3');
-        dispatcher.on('end', ()=> {
-          message.member.voiceChannel.leave()
-        })
+        try {
+          const dispatcher = connection.playFile('song.mp3');
+          dispatcher.on('end', ()=> {
+            message.member.voiceChannel.leave()
+          }) 
+        } catch(e) {
+          console.log(e)  
+        }
       })
       .catch(console.log);
   } else {
