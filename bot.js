@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 var path = require('path');
 console.log('index file loaded')
-const TOKEN = 'NTgxMTgyOTYzNDU1MzYxMDQ1.XOeLuQ.o_jy4GGxO5NB1DOFZoKIAUhAQlg';
+const TOKEN = process.env.BOT_TOKEN;
 client.login(TOKEN);
 
 client.on('ready', ()=> {
@@ -19,7 +19,7 @@ client.on('message', message => {
       .join()
       .then(connection => {
         try {
-          const dispatcher = connection.playFile('song.mp3');
+          const dispatcher = connection.playFile('bell.mp3');
           console.log('playing song : song.mp3')
           dispatcher.on('end', ()=> {
             message.member.voiceChannel.leave()
