@@ -19,7 +19,7 @@ client.on('message', message => {
       .join()
       .then(connection => {
         try {
-          const dispatcher = connection.playFile('bell.mp3');
+          const dispatcher = connection.playFile('song.mp3');
           console.log('playing song : song.mp3')
           dispatcher.on('end', ()=> {
             message.member.voiceChannel.leave()
