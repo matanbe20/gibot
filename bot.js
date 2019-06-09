@@ -37,14 +37,9 @@ client.on("message", async message => {
       `https://itunes.apple.com/search?term=${term}`
     );
     const data = await response.json();
-    console.log(data);
-    try {
-      if (!data || !data.results.length)
-        return message.reply("No song was found :(");
-      songMetadata = randomizeResult(data.results);
-    } catch (e) {
-      console.log(e);
-    }
+    if (!data || !data.results.length)
+      return message.reply("No song was found :(");
+    songMetadata = randomizeResult(data.results);
 
     const channel = message.member.voiceChannel;
     const connection = await channel.join();
