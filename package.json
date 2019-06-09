@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.0",
-    "ffmpeg-binaries": "latest",
+    "ffmpeg-binaries": "4.0.0",
+    "isomorphic-unfetch": "^3.0.0",
     "node-opus": "^0.3.1"
   }
 }
