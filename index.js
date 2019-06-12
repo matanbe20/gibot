@@ -44,6 +44,7 @@ client.on('message', async message => {
   let term = '';
   let songMetadata = {};
   let isSong = false;
+  if (content === ';roast Gibor')  await message.reply('ברק הזה אפס... יואו');
   if (content.indexOf('!g') === 0) {
     term = content.split('!g ')[1];
     console.log('new search for:', term);
@@ -59,7 +60,7 @@ client.on('message', async message => {
     const response = await fetch(
       `https://itunes.apple.com/search?term=${term}&media=music`
     );
-    console.log('fetching list ... ')
+    console.log('fetching list ... ');
     const data = await response.json();
     if (!data || !data.results.length)
       return message.reply('No song was found :(');
