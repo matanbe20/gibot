@@ -8,11 +8,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Matan Ben Moshe",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.0",
-    "ffmpeg-binaries": "^4.0.0",
+    "ffmpeg-binaries": "latest",
+    "isomorphic-unfetch": "^3.0.0",
     "node-opus": "^0.3.1"
   }
 }
