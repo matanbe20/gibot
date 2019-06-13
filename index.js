@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const fetch = require('isomorphic-unfetch');
-const TOKEN = 'NTgxMTgyOTYzNDU1MzYxMDQ1.XOeLuQ.o_jy4GGxO5NB1DOFZoKIAUhAQlg';
+const TOKEN = process.env.AWS_GIBOT_TOKEN;
 
 client.login(TOKEN);
 
