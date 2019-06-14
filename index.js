@@ -5,7 +5,11 @@ const TOKEN = process.env.AWS_GIBOT_TOKEN;
 const YT_API_KEY = process.env.AWS_GIBOT_YT_API_TOKEN;
 var google = require('googleapis');
 const ytdl = require('ytdl-core-discord');
-const youtubeV3 = new google.youtube_v3.Youtube({ version: 'v3', auth: YT_API_KEY });
+const youtubeV3 = new google.youtube_v3.Youtube({
+  version: 'v3',
+  auth: YT_API_KEY
+});
+
 const YT_BASE_URL = 'https://www.youtube.com/watch?v=';
 
 client.login(TOKEN);
@@ -41,7 +45,7 @@ const handleSong = async (song, connection, message) => {
   console.log(song);
   const { title, thumbnails } = song.snippet;
   play(connection, YT_BASE_URL + song.id.videoId);
-  console.log(thumbnails.default)
+    console.log('now playing:', title);
   const imageMessage = {
     embed: {
       color: '24311',
@@ -65,8 +69,6 @@ client.on('message', async message => {
     return;
   }
 
-
-
   let term = '';
   let songMetadata = {};
   let isSong = false;
@@ -77,11 +79,10 @@ client.on('message', async message => {
       isSong = true;
       entity = 'song';
       term = content.split('!g song ')[1];
-      console.log('Song search!')
+      console.log('Song search!');
     }
     term = term.replace(' ', '+');
   } else return;
-
 
   if (message.member.voiceChannel) {
     const response = await fetch(
@@ -98,23 +99,28 @@ client.on('message', async message => {
     const channel = message.member.voiceChannel;
     const connection = await channel.join();
     let song;
-    
-    var request = youtubeV3.search.list(
-      {
-        part: 'snippet',
-        type: 'video',
-        q: term,
-        videoCategoryId: 10,
-        maxResults: 50,
-        order: 'relevance',
-        safeSearch: 'moderate',
-        videoEmbeddable: true
-      },
-      (err, response) => {
-        if (response && !isSong) handleSong(randomizeResult(response.data.items, 25), connection, message);
-        if (response && isSong) handleSong(response.data.items[0], connection, message);
-      }
-    );
+
+    const query = {
+      part: 'snippet',
+      type: 'video',
+      q: term,
+      videoCategoryId: 10,
+      maxResults: 50,
+      order: 'relevance',
+      safeSearch: 'moderate',
+      videoEmbeddable: true
+    };
+    var request = youtubeV3.search.list(query, (err, response) => {
+      if(err) return message.reply('Error ...')
+      if (response && !isSong)
+        handleSong(
+          randomizeResult(response.data.items, 25),
+          connection,
+          message
+        );
+      if (response && isSong)
+        handleSong(response.data.items[0], connection, message);
+    });
 
     // const playingOptions = {
     //   volume: 0.14
@@ -123,8 +129,7 @@ client.on('message', async message => {
     //   songMetadata.previewUrl,
     //   playingOptions
     // );
-    const log = `${songMetadata.trackName} - ${songMetadata.artistName}`;
-    console.log('now playing:', log);
+    
 
     isPlaying = true;
 
