@@ -42,7 +42,6 @@ const randomizeResult = (array, randomizerValue) => {
 let entity = 'musicArtist';
 
 const handleSong = async (song, connection, message) => {
-  console.log(song);
   const { title, thumbnails } = song.snippet;
   play(connection, YT_BASE_URL + song.id.videoId);
     console.log('now playing:', title);
@@ -111,7 +110,10 @@ client.on('message', async message => {
       videoEmbeddable: true
     };
     var request = youtubeV3.search.list(query, (err, response) => {
-      if(err) return message.reply('Error ...')
+      if(err) {
+        console.log(error)
+        return message.reply('Error ...')
+      }
       if (response && !isSong)
         handleSong(
           randomizeResult(response.data.items, 25),
