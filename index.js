@@ -2,6 +2,11 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const fetch = require('isomorphic-unfetch');
 const TOKEN = process.env.AWS_GIBOT_TOKEN;
+const YT_API_KEY = process.env.AWS_GIBOT_YT_API_TOKEN;
+var google = require('googleapis');
+const ytdl = require('ytdl-core-discord');
+const youtubeV3 = new google.youtube_v3.Youtube({ version: 'v3', auth: YT_API_KEY });
+const YT_BASE_URL = 'https://www.youtube.com/watch?v=';
 
 client.login(TOKEN);
 
@@ -15,6 +20,10 @@ client.on('ready', () => {
       )
     );
 });
+
+async function play(connection, url) {
+  return connection.playOpusStream(await ytdl(url));
+}
 let isPlaying = false;
 
 const randomizeResult = (array, randomizerValue) => {
@@ -28,6 +37,23 @@ const randomizeResult = (array, randomizerValue) => {
 
 let entity = 'musicArtist';
 
+const handleSong = async (song, connection, message) => {
+  console.log(song);
+  const { title, thumbnails } = song.snippet;
+  play(connection, YT_BASE_URL + song.id.videoId);
+  console.log(thumbnails.default)
+  const imageMessage = {
+    embed: {
+      color: '24311',
+      description: title,
+      image: {
+        url: thumbnails.medium.url
+      }
+    }
+  };
+  await message.reply(imageMessage);
+};
+
 client.on('message', async message => {
   // Only try to join the sender's voice channel if they are in one themselves
 
@@ -39,22 +65,23 @@ client.on('message', async message => {
     return;
   }
 
-  if (isPlaying) return;
+
 
   let term = '';
   let songMetadata = {};
   let isSong = false;
-  if (content === ';roast Gibor')  await message.reply('ברק הזה אפס... יואו');
   if (content.indexOf('!g') === 0) {
     term = content.split('!g ')[1];
     console.log('new search for:', term);
-    if (term === 'song') {
+    if (term.indexOf('song ') === 0) {
       isSong = true;
       entity = 'song';
       term = content.split('!g song ')[1];
+      console.log('Song search!')
     }
     term = term.replace(' ', '+');
   } else return;
+
 
   if (message.member.voiceChannel) {
     const response = await fetch(
@@ -70,31 +97,41 @@ client.on('message', async message => {
 
     const channel = message.member.voiceChannel;
     const connection = await channel.join();
-    const playingOptions = {
-      volume: 0.14
-    };
-    const dispatcher = connection.playStream(
-      songMetadata.previewUrl,
-      playingOptions
+    let song;
+    
+    var request = youtubeV3.search.list(
+      {
+        part: 'snippet',
+        type: 'video',
+        q: term,
+        videoCategoryId: 10,
+        maxResults: 50,
+        order: 'relevance',
+        safeSearch: 'moderate',
+        videoEmbeddable: true
+      },
+      (err, response) => {
+        if (response && !isSong) handleSong(randomizeResult(response.data.items, 25), connection, message);
+        if (response && isSong) handleSong(response.data.items[0], connection, message);
+      }
     );
+
+    // const playingOptions = {
+    //   volume: 0.14
+    // };
+    // const dispatcher = connection.playStream(
+    //   songMetadata.previewUrl,
+    //   playingOptions
+    // );
     const log = `${songMetadata.trackName} - ${songMetadata.artistName}`;
     console.log('now playing:', log);
-    const imageMessage = {
-      embed: {
-        color: '24311',
-        description: log,
-        image: {
-          url: songMetadata.artworkUrl100
-        }
-      }
-    };
-    await message.reply(imageMessage);
+
     isPlaying = true;
 
-    dispatcher.on('end', () => {
-      message.member.voiceChannel.leave();
-      isPlaying = false;
-    });
+    // dispatcher.on('end', () => {
+    //   message.member.voiceChannel.leave();
+    //   isPlaying = false;
+    // });
   } else {
     console.log('User not joind a voice channel... canceled');
     return message.reply('You need to join a voice channel first!');

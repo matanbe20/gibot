@@ -13,7 +13,9 @@
   "dependencies": {
     "discord.js": "^11.5.0",
     "ffmpeg-binaries": "^3.2.2",
+    "googleapis": "^40.0.0",
     "isomorphic-unfetch": "^3.0.0",
-    "node-opus": "^0.3.1"
+    "node-opus": "^0.3.1",
+    "ytdl-core-discord": "^1.0.3"
   }
 }
