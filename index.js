@@ -111,7 +111,7 @@ client.on('message', async message => {
     };
     var request = youtubeV3.search.list(query, (err, response) => {
       if(err) {
-        console.log(error)
+        console.log(err)
         return message.reply('Error ...')
       }
       if (response && !isSong)
